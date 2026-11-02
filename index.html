@@ -56,7 +56,7 @@ const menuBtn=document.getElementById('menuBtn'),navLinks=document.getElementByI
 document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b===btn));const filter=btn.dataset.filter;document.querySelectorAll('.project').forEach(card=>{card.style.display=filter==='all'||card.dataset.category===filter?'block':'none'})}));
 const modal=document.getElementById('videoModal');document.getElementById('openVideo').addEventListener('click',()=>modal.classList.add('open'));document.getElementById('closeVideo').addEventListener('click',()=>modal.classList.remove('open'));modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});document.getElementById('year').textContent=new Date().getFullYear();
 // Apply real company contact details only when supplied in assets/site-config.js.
-const digits=value=>String(value||'').replace(/\\D/g,'');
+const digits=value=>String(value||'').replace(/\D/g,'');
 const whatsappNumber=digits(SITE_CONFIG.whatsappNumber);
 const phoneNode=document.getElementById('contactPhone');if(phoneNode&&SITE_CONFIG.companyPhone)phoneNode.textContent=SITE_CONFIG.companyPhone;
 const emailNode=document.getElementById('contactEmail');if(emailNode&&SITE_CONFIG.companyEmail)emailNode.textContent=SITE_CONFIG.companyEmail;
@@ -73,7 +73,7 @@ leadForm.addEventListener('submit',async e=>{
  if(String(data.get('companyWebsite')||'').trim()){status.textContent='Your request could not be submitted. Please try again.';return;}
  const project={name:String(data.get('name')||'').trim(),phone:String(data.get('phone')||'').trim(),email:String(data.get('email')||'').trim()||null,project_type:String(data.get('project_type')||''),budget:String(data.get('budget')||'').trim()||null,details:String(data.get('details')||'').trim(),consent:document.getElementById('consent').checked,source:'website'};
  if(!project.name||!project.phone||!project.project_type||!project.details||!project.consent){status.textContent='Please complete all required fields and accept the privacy notice.';return;}
- const base=String(SITE_CONFIG.supabaseUrl||'').trim().replace(/\\/$/,'');
+ const base=String(SITE_CONFIG.supabaseUrl||'').trim().replace(/\/$/,'');
  const key=String(SITE_CONFIG.supabasePublishableKey||SITE_CONFIG.supabaseAnonKey||'').trim();
  if(!base||!key){status.textContent='The form is ready, but online submission is not configured yet. Add the Supabase project URL and publishable key in assets/site-config.js, then run supabase/schema.sql in the Supabase SQL Editor.';return;}
  submit.disabled=true;submit.textContent='Sending…';status.textContent='Submitting your request securely…';
