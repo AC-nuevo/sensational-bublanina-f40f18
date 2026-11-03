@@ -64,25 +64,26 @@ const areaNode=document.getElementById('serviceArea');if(areaNode&&SITE_CONFIG.s
 const whatsappFloat=document.getElementById('whatsappFloat');
 if(whatsappNumber){whatsappFloat.href='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent('Hello Asumit Construcciones, I would like to discuss a project.');whatsappFloat.target='_blank';whatsappFloat.rel='noopener noreferrer';whatsappFloat.setAttribute('aria-label','Contact Asumit Construcciones on WhatsApp');}
 document.querySelectorAll('.socials a[aria-label]').forEach(link=>{const label=link.getAttribute('aria-label').toLowerCase();let url='';if(label==='facebook')url=SITE_CONFIG.facebookUrl||'';if(label==='instagram')url=SITE_CONFIG.instagramUrl||'';if(label==='whatsapp'&&whatsappNumber)url='https://wa.me/'+whatsappNumber;if(url){link.href=url;link.target='_blank';link.rel='noopener noreferrer';}else{link.hidden=true;}});
+const uiText=(english,spanish)=>document.documentElement.lang==='es'?spanish:english;
 const leadForm=document.getElementById('leadForm');
 leadForm.addEventListener('submit',async e=>{
  e.preventDefault();
  const status=document.getElementById('formStatus');
  const submit=leadForm.querySelector('button[type="submit"]');
  const data=new FormData(leadForm);
- if(String(data.get('companyWebsite')||'').trim()){status.textContent='Your request could not be submitted. Please try again.';return;}
+ if(String(data.get('companyWebsite')||'').trim()){status.textContent=uiText("Your request could not be submitted. Please try again.","No se pudo enviar tu solicitud. Inténtalo nuevamente.");return;}
  const project={name:String(data.get('name')||'').trim(),phone:String(data.get('phone')||'').trim(),email:String(data.get('email')||'').trim()||null,project_type:String(data.get('project_type')||''),budget:String(data.get('budget')||'').trim()||null,details:String(data.get('details')||'').trim(),consent:document.getElementById('consent').checked,source:'website'};
- if(!project.name||!project.phone||!project.project_type||!project.details||!project.consent){status.textContent='Please complete all required fields and accept the privacy notice.';return;}
+ if(!project.name||!project.phone||!project.project_type||!project.details||!project.consent){status.textContent=uiText("Please complete all required fields and accept the privacy notice.","Completa los campos obligatorios y acepta el aviso de privacidad.");return;}
  const base=String(SITE_CONFIG.supabaseUrl||'').trim().replace(/\/$/,'');
  const key=String(SITE_CONFIG.supabasePublishableKey||SITE_CONFIG.supabaseAnonKey||'').trim();
- if(!base||!key){status.textContent='The form is ready, but online submission is not configured yet. Add the Supabase project URL and publishable key in assets/site-config.js, then run supabase/schema.sql in the Supabase SQL Editor.';return;}
- submit.disabled=true;submit.textContent='Sending…';status.textContent='Submitting your request securely…';
+ if(!base||!key){status.textContent=uiText("The form is ready, but online submission is not configured yet. Add the Supabase project URL and publishable key in assets/site-config.js, then run supabase/schema.sql in the Supabase SQL Editor.","El formulario está listo, pero aún falta configurar el envío en línea. Añade la URL del proyecto y la clave publicable de Supabase en assets/site-config.js y ejecuta supabase/schema.sql en el editor SQL de Supabase.");return;}
+ submit.disabled=true;submit.textContent=uiText("Sending…","Enviando…");status.textContent=uiText("Submitting your request securely…","Enviando tu solicitud de forma segura…");
  try{
   const response=await fetch(base+'/rest/v1/leads',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(project)});
-  if(!response.ok){let message='Submission failed ('+response.status+'). Please try again or contact the company.';try{const detail=await response.json();if(detail&&detail.message)message=detail.message;}catch(_){}throw new Error(message);}
-  leadForm.reset();status.textContent='Thank you. Your project inquiry has been sent successfully. Our team will contact you soon.';
- }catch(error){status.textContent=error.message||'We could not send your request. Please try again later.';}
- finally{submit.disabled=false;submit.textContent='Request my consultation ↗';}
+  if(!response.ok){let message=uiText("Submission failed (","No se pudo enviar la solicitud (")+response.status+uiText("). Please try again or contact the company.","). Inténtalo nuevamente o comunícate con la empresa.");try{const detail=await response.json();if(detail&&detail.message)message=detail.message;}catch(_){}throw new Error(message);}
+  leadForm.reset();status.textContent=uiText("Thank you. Your project inquiry has been sent successfully. Our team will contact you soon.","Gracias. Recibimos tu solicitud correctamente. Nuestro equipo se pondrá en contacto contigo pronto.");
+ }catch(error){status.textContent=error.message||uiText("We could not send your request. Please try again later.","No pudimos enviar tu solicitud. Inténtalo más tarde.");}
+ finally{submit.disabled=false;submit.textContent=uiText("Request my consultation ↗","Enviar mi solicitud ↗");}
 });
 </script>
 
