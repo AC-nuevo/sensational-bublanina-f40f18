@@ -35,7 +35,7 @@ function doPost(e) {
       }
       const safe = value => {
         const s = String(value || "").trim();
-        return /^[=+@\\-\\t\\r]/.test(s) ? "'" + s : s;
+        return /^[=+@\-\t\r]/.test(s) ? "'" + s : s;
       };
       sheet.appendRow([
         new Date(), safe(data.name), safe(data.phone), safe(data.email),
