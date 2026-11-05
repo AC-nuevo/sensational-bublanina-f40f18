@@ -1,38 +1,41 @@
-# Configuración de Cloudflare para Asumit Construcciones
+# Configuración de Cloudflare Pages + Google Sheets para Asumit Construcciones
 
-El sitio usa HTML/CSS/JavaScript propio y una Cloudflare Pages Function. El formulario no inserta marcas, logotipos ni publicidad de Cloudflare en la página.
+El sitio conserva su formulario propio, sin marca de agua ni publicidad. Cloudflare Pages recibe el formulario y una función lo reenvía a Google Apps Script, que agrega cada solicitud a una hoja privada de Google Sheets.
 
-## 1. Crear el proyecto Pages
-- Cloudflare Dashboard → Workers & Pages → Create application → Pages → Connect to Git.
-- Conecta `AC-nuevo/sensational-bublanina-f40f18`.
-- Production branch: `main`.
-- Framework preset: `None`.
-- Build command: vacío.
-- Build output directory: `.` (la carpeta raíz, donde está `index.html`).
-- Guarda y despliega.
+## 1. Crear la hoja de Google
+1. Entra en https://sheets.google.com y crea una hoja llamada `Solicitudes Asumit`.
+2. Copia el ID de la hoja desde su URL: es el texto entre `/d/` y `/edit`.
 
-## 2. Crear la base de datos D1
-- Workers & Pages → D1 SQL Database → Create database.
-- Nombre sugerido: `asumit-leads`.
-- Abre la base de datos, entra en Console y ejecuta el contenido de `migrations/0001_create_leads.sql`.
+## 2. Crear el receptor de Google Apps Script
+1. Entra en https://script.google.com y crea un proyecto.
+2. Abre el archivo `Code.gs`, borra el ejemplo y pega el contenido de [google-apps-script/Code.gs](google-apps-script/Code.gs) del repositorio.
+3. En **Project Settings** → **Script Properties**, agrega:
+   - `ASUMIT_SHEET_ID`: el ID de tu hoja de Google.
+   - `ASUMIT_FORM_SECRET`: crea una contraseña aleatoria larga (mínimo 32 caracteres). No la publiques ni la pongas en GitHub.
+4. Haz clic en **Deploy** → **New deployment**.
+5. Selecciona tipo **Web app**.
+6. **Execute as:** Me.
+7. **Who has access:** Anyone.
+8. Haz clic en **Deploy**, autoriza los permisos solicitados y copia la URL que termina en `/exec`.
 
-## 3. Conectar D1 con Pages
-- Abre el proyecto Pages → Settings → Bindings → Add → D1 database.
-- Variable name: `ASUMIT_DB` (debe escribirse exactamente así).
-- Selecciona la base `asumit-leads`.
-- Guarda y vuelve a desplegar el proyecto para que la Function reciba el binding.
+El acceso público al Web App es necesario para que el formulario pueda enviar datos sin iniciar sesión. El receptor valida una clave secreta que solo se configura en las propiedades de Apps Script y en Cloudflare; no se envía al navegador.
 
-## 4. Dominio
-- En Pages → Custom domains → Set up a custom domain, agrega el dominio que ya tienes en Cloudflare.
-- Sigue las indicaciones de Cloudflare y espera a que el estado del dominio sea Active.
+## 3. Configurar Cloudflare Pages
+1. Abre Cloudflare → **Workers & Pages** → tu proyecto Pages.
+2. Entra en **Settings** → **Environment variables** (o **Variables and Secrets**).
+3. Agrega estas variables como secretos para **Production**:
+   - `GOOGLE_APPS_SCRIPT_URL`: la URL /exec del despliegue de Apps Script.
+   - `GOOGLE_SHEETS_SECRET`: exactamente la misma clave creada como `ASUMIT_FORM_SECRET`.
+4. Guarda los cambios y vuelve a desplegar el proyecto para que la Function tome las variables.
 
-## 5. Prueba antes de retirar los servicios antiguos
-- Abre el dominio de Pages y envía una solicitud de prueba con datos propios.
-- En D1 → Console ejecuta: `SELECT id, name, phone, email, project_type, created_at FROM leads ORDER BY id DESC LIMIT 10;`
-- Confirma que aparece la solicitud y que la página muestra el mensaje de éxito.
+## 4. Verificar
+1. Abre el dominio de tu página y envía una solicitud de prueba.
+2. Confirma que aparece una fila nueva en la pestaña **Solicitudes** de Google Sheets.
+3. Comprueba que el sitio muestra el mensaje de envío exitoso.
 
-## Importante
-- El formulario está diseñado sin servicios externos de formularios ni marcas visibles.
-- Los datos se guardan en D1. Para revisar solicitudes, usa D1 → Console; no hay todavía un panel administrativo público.
-- No elimines el proyecto ni la base de Supabase hasta que Cloudflare esté publicado, el dominio esté activo y la prueba de envío/lectura haya funcionado.
-- Protege el acceso al panel de Cloudflare con autenticación multifactor. No publiques credenciales ni tokens en GitHub.
+## Seguridad y mantenimiento
+- No compartas la hoja públicamente: mantenla privada y comparte solo con las personas autorizadas.
+- No publiques la URL de Apps Script ni la clave secreta en archivos del sitio o en GitHub.
+- Si creas una nueva versión del Web App de Apps Script, actualiza la URL en Cloudflare si cambia.
+- No elimines Netlify ni los datos antiguos de Supabase hasta probar el nuevo flujo en el dominio definitivo.
+- Los registros quedan en Google Sheets; no se necesita D1 para este flujo.
