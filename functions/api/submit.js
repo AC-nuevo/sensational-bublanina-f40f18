@@ -33,7 +33,7 @@ export async function onRequestPost({ request, env }) {
     consent: data.consent === true
   };
   if (!lead.name || lead.name.length > 120 || !lead.phone || lead.phone.length > 30 ||
-      (lead.email && (lead.email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(lead.email))) ||
+      (lead.email && (lead.email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email))) ||
       !lead.project_type || lead.project_type.length > 100 ||
       lead.budget.length > 100 || !lead.details || lead.details.length > 5000 || !lead.consent) {
     return json({ error: "Revisa los campos obligatorios y acepta la política de privacidad." }, 400);
