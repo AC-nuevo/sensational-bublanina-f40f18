@@ -11,9 +11,8 @@ window.ASUMIT_CONFIG = {
   instagramUrl: ""
 };
 
-// The full privacy notice should remain visible on the published page, not only
-// after a visitor clicks a footer anchor. Do not reveal the short draft placeholder.
-const privacyNotice = document.getElementById("privacy");
-if (privacyNotice && privacyNotice.querySelectorAll("h3").length >= 5) {
-  privacyNotice.style.display = "block";
-}
+// Keep policy sections out of the main page flow until a visitor opens a policy link.
+// The form consent and footer links set the matching URL hash and reveal that section.
+const policyVisibilityStyle = document.createElement("style");
+policyVisibilityStyle.textContent = ".privacy{display:none!important}.privacy:target{display:block!important}";
+document.head.appendChild(policyVisibilityStyle);
