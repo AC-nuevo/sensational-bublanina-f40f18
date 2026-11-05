@@ -10,3 +10,10 @@ window.ASUMIT_CONFIG = {
   facebookUrl: "",
   instagramUrl: ""
 };
+
+// The full privacy notice should remain visible on the published page, not only
+// after a visitor clicks a footer anchor. Do not reveal the short draft placeholder.
+const privacyNotice = document.getElementById("privacy");
+if (privacyNotice && privacyNotice.querySelectorAll("h3").length >= 5) {
+  privacyNotice.style.display = "block";
+}
