@@ -10,5 +10,23 @@ window.ASUMIT_CONFIG = {
 
 // Keep policy sections out of the main page flow until a visitor opens a policy link.
 const policyVisibilityStyle = document.createElement("style");
-policyVisibilityStyle.textContent = ".privacy{display:none!important}.privacy:target{display:block!important}";
+policyVisibilityStyle.textContent = `
+  .privacy{display:none!important}
+  .privacy:target{display:block!important}
+
+  /* Give the mission statement a more distinctive, editorial feel. */
+  .mission-copy h2{
+    max-width: 760px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.7rem, 5vw, 4.8rem);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -.055em;
+    text-wrap: balance;
+  }
+  .mission-copy p{
+    max-width: 580px;
+    line-height: 1.85;
+  }
+`;
 document.head.appendChild(policyVisibilityStyle);
