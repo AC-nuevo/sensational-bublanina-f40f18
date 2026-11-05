@@ -50,10 +50,3 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "No pudimos guardar tu solicitud. Inténtalo más tarde." }, 500);
   }
 }
-
-export async function onRequest(context) {
-  if (context.request.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405, headers: { Allow: "POST" } });
-  }
-  return onRequestPost(context);
-}
