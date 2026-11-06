@@ -138,7 +138,7 @@ if(whatsappNumber){
   whatsappFloat.target='_blank';
   whatsappFloat.rel='noopener noreferrer';
 }
-const uiText=(english,spanish)=>document.documentElement.lang==='es'?spanish:english;
+const uiText=(english,spanish)=>document.documentElement.lang.toLowerCase().startsWith('es')?spanish:english;
 const leadForm=document.getElementById('leadForm');
 leadForm.addEventListener('submit',async e=>{
   e.preventDefault();
