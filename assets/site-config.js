@@ -1,7 +1,7 @@
 // Public website settings. No database credentials or private keys belong here.
 window.ASUMIT_CONFIG = {
-  whatsappNumber: "18294226063",
-  companyPhone: "+1 829-422-6063",
+  whatsappNumber: "18494069227",
+  companyPhone: "849 406 9227",
   companyEmail: "info@asumitconstrucciones.com",
   serviceArea: "Santiago de los Caballeros, República Dominicana",
   facebookUrl: "",
